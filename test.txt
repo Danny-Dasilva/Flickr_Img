@@ -1,0 +1,83 @@
+// Update page on initial page load
+updatePage(location.pathname);
+
+// Monkey patch `pushState` to fire updatePage when 'page' changes
+var pushState = history.pushState;
+history.pushState = function() {
+  pushState.apply(history, arguments);
+  var newURL = arguments[2];
+  updatePage(newURL);
+};
+
+// This is how long (in ms) we poll for elements on each navigation
+var TIMEOUT = 5000;
+
+// Make page-specific changes depending on URL
+// Add if-else logic and variation changes to this function
+function updatePage(url) {
+  console.log('URL is now ' + url);
+  // Change top nav CTA copy on all pages
+  onAndOnFor('.find-a-location', function($span) {
+    console.log('changing top nav cta to Request Estimate');
+    $span.text('Get a Quote Top Nav');
+  }, TIMEOUT);
+
+  // Change hero CTA on homepage
+  // NOTE: 
+  if (url === '/') {
+    console.log('homepage'); 
+
+    /*onAndOnFor('a[href="/locations/search"]', function($button) {
+      console.log('changing hero button to Get a Quote');
+      $button.text('Get a Quote Red Box');
+    }, TIMEOUT);*/
+    onAndOnFor('.btn.btn-border.uk-text-center', function($button) {
+      console.log('changing hero button to Get a Quote');
+      $button.text('Get a Quote Red Box Man');
+    }, TIMEOUT);
+  } else if (url === '/locations/search') {
+    console.log('locations search page');
+    // Update heading
+    onAndOnFor('#findAServiceBody > h2', function($heading) {
+      $heading.text('Find a Location to Start Your Quote');
+    }, TIMEOUT);
+    // Hide top nav CTA
+    onAndOnFor('nav > .uk-navbar-right', function ($div) {
+      console.log("Where are you?");
+      $div.hide();     
+    }, TIMEOUT);
+  } else if (url.includes('/foo')) {// Do stuff on foo/* page ...
+  
+  }
+
+  if (url != '/locations/search') {
+    console.log('all but locations search page'); 
+    // Show top nav CTA
+    onAndOnFor('nav > .uk-navbar-right', function ($div) {
+      $div.show();     
+    }, TIMEOUT);
+
+  }
+}
+
+/**
+ * Helper functions
+ */
+// Poll for an element, execute callback, *keep* polling until timeout
+function onAndOnFor(selector, callback, timeout) {
+  var keepPolling = true;
+  setTimeout(function() {
+    keepPolling = false;
+  }, timeout);
+
+  (function poll() {
+    var jQueryObj = window.jQuery(selector);
+    if (jQueryObj.length) {
+      callback(jQueryObj);
+    }
+    if (keepPolling) {
+      return setTimeout(poll, 50);
+    }
+  }
+  )();
+}
