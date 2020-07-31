@@ -28,7 +28,9 @@ def encode(text, image_path, limit=256):
     if type(text) is not str:
         raise TypeError("Parameter 'text' must be a string.")
     text_length = len(text)
+    print(text_length)
     size = get_image_size(text_length)
+    print(size)
     result_path = check_filename(image_path, extension=".png")
 
     img = Image.new("L", size)  # grayscale, blank black image
