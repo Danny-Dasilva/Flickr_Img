@@ -13,6 +13,7 @@ the limit the new value will be 1.
 This means that character encoding schemes that use the same amount of values or fewer can encode all their data in the
 image without any loss i.e. 256 means 8 bit or less character encoding schemes work without loss e.g. ASCII.
 Image sizes are automatically set using the length of text input.
+Change this to square
 The last pixel (or last 2 when text length is even) in an image will always have a value of 0.
 """
 
